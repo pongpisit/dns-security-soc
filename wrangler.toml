@@ -1,0 +1,91 @@
+name = "dns-security-soc"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# The following secrets must be set using `wrangler secret put`:
+# - CF_API_TOKEN: Cloudflare API token with Log Explorer and GraphQL Analytics access
+# - CF_ACCOUNT_ID: Cloudflare account ID
+# - USE_LOG_EXPLORER: 'true' (default) or 'false' for fallback to GraphQL
+
+# Default environment bindings (used when no --env specified)
+vars = { ENVIRONMENT = "production" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dns-security-db"
+database_id = "4051a06d-5231-42dc-8107-468de1baf1da"
+
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "34d523604e5d486493c9086b63dd7fab"
+
+[[analytics_engine_datasets]]
+binding = "DNS_ANALYTICS"
+dataset = "dns_security_metrics"
+
+# Cron triggers for data collection (default)
+[triggers]
+crons = [
+  "*/5 * * * *",  # Every 5 minutes for real-time data
+  "0 * * * *",    # Every hour for aggregated data
+  "0 0 * * *"     # Daily for historical aggregation
+]
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "dns-security-db"
+database_id = "4051a06d-5231-42dc-8107-468de1baf1da"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE_KV"
+id = "34d523604e5d486493c9086b63dd7fab"
+
+[[env.production.analytics_engine_datasets]]
+binding = "DNS_ANALYTICS"
+dataset = "dns_security_metrics"
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "dns-security-db-dev"
+database_id = "987972dc-6a39-4cb6-ab4a-0dfd58db589f"
+
+[[env.development.kv_namespaces]]
+binding = "CACHE_KV"
+id = "34d523604e5d486493c9086b63dd7fab"
+preview_id = "7bdfb47ab7ca424ba95070a15e647a12"
+
+[[env.development.analytics_engine_datasets]]
+binding = "DNS_ANALYTICS"
+dataset = "dns_security_metrics_dev"
+
+# Cron triggers for data collection (production)
+[env.production.triggers]
+crons = [
+  "*/1 * * * *",  # Every 1 minute for real-time data (improved granularity)
+  "5 * * * *",    # 5 minutes past every hour for aggregated data
+  "0 1 * * *"     # 1 AM daily for cleanup and maintenance
+]
+
+# Cloudflare Pipeline for long-term storage (90+ days)
+[[env.production.pipelines]]
+binding = "DNS_PIPELINE"
+pipeline = "dns-security-events"
+
+# R2 bucket for querying archived data
+[[env.production.r2_buckets]]
+binding = "DNS_ARCHIVE"
+bucket_name = "dns-security-pipeline"
+
+# Cron triggers for data collection (development)
+[env.development.triggers]
+crons = [
+  "*/5 * * * *",  # Every 5 minutes for real-time data
+  "0 * * * *",    # Every hour for aggregated data
+  "0 0 * * *"     # Daily for historical aggregation
+]

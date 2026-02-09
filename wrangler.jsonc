@@ -1,0 +1,116 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dns-security-soc",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-12-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dns-security-db",
+      "database_id": "4051a06d-5231-42dc-8107-468de1baf1da"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE_KV",
+      "id": "34d523604e5d486493c9086b63dd7fab"
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "DNS_ANALYTICS",
+      "dataset": "dns_security_metrics"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *",
+      "0 * * * *",
+      "0 0 * * *"
+    ]
+  },
+  "env": {
+    "production": {
+      "vars": {
+        "ENVIRONMENT": "production"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "dns-security-db",
+          "database_id": "4051a06d-5231-42dc-8107-468de1baf1da"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "CACHE_KV",
+          "id": "34d523604e5d486493c9086b63dd7fab"
+        }
+      ],
+      "analytics_engine_datasets": [
+        {
+          "binding": "DNS_ANALYTICS",
+          "dataset": "dns_security_metrics"
+        }
+      ],
+      "pipelines": [
+        {
+          "binding": "DNS_PIPELINE",
+          "pipeline": "dns-security-events"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "DNS_ARCHIVE",
+          "bucket_name": "dns-security-pipeline"
+        }
+      ],
+      "triggers": {
+        "crons": [
+          "*/1 * * * *",
+          "5 * * * *",
+          "0 1 * * *"
+        ]
+      }
+    },
+    "development": {
+      "vars": {
+        "ENVIRONMENT": "development"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "dns-security-db-dev",
+          "database_id": "987972dc-6a39-4cb6-ab4a-0dfd58db589f"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "CACHE_KV",
+          "id": "34d523604e5d486493c9086b63dd7fab",
+          "preview_id": "7bdfb47ab7ca424ba95070a15e647a12"
+        }
+      ],
+      "analytics_engine_datasets": [
+        {
+          "binding": "DNS_ANALYTICS",
+          "dataset": "dns_security_metrics_dev"
+        }
+      ],
+      "triggers": {
+        "crons": [
+          "*/5 * * * *",
+          "0 * * * *",
+          "0 0 * * *"
+        ]
+      }
+    }
+  }
+}

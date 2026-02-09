@@ -1,0 +1,8 @@
+name = "dns-security-dashboard"
+compatibility_date = "2024-01-01"
+
+[env.production]
+compatibility_date = "2024-01-01"
+
+[env.development]
+compatibility_date = "2024-01-01"

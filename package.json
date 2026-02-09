@@ -1,0 +1,55 @@
+{
+  "name": "dns-security-soc",
+  "version": "1.0.0",
+  "description": "DNS Security SOC Dashboard Backend API",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env production",
+    "deploy:dev": "./scripts/deploy.sh development",
+    "deploy:production": "./scripts/deploy.sh production",
+    "db:migrate": "wrangler d1 migrations apply dns-security-db-dev --env development --local",
+    "db:migrate:prod": "wrangler d1 migrations apply dns-security-db --env production --remote",
+    "db:create": "wrangler d1 create dns-security-db-dev",
+    "db:create:prod": "wrangler d1 create dns-security-db",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "verify": "npm run verify:all",
+    "verify:all": "npm run verify:dataflow && npm run verify:database && npm run verify:graphql && npm run verify:monitor",
+    "verify:dataflow": "node scripts/verify-data-flow.js",
+    "verify:database": "node scripts/verify-database.js",
+    "verify:graphql": "node scripts/test-graphql-integration.js",
+    "verify:monitor": "node scripts/monitor-data-collection.js",
+    "verify:run": "./scripts/run-verification.sh",
+    "verify:run:dataflow": "./scripts/run-verification.sh dataflow",
+    "verify:run:database": "./scripts/run-verification.sh database",
+    "verify:run:graphql": "./scripts/run-verification.sh graphql",
+    "verify:run:monitor": "./scripts/run-verification.sh monitor",
+    "setup:secrets": "./scripts/setup-secrets.sh",
+    "test:graphql:simple": "node scripts/test-graphql-simple.js",
+    "test:graphql:worker": "node scripts/test-worker-graphql.js"
+  },
+  "dependencies": {
+    "hono": "^4.6.14",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "@types/node": "^22.10.5",
+    "node-fetch": "^3.3.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.63.0"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "dns",
+    "security",
+    "soc",
+    "dashboard"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
